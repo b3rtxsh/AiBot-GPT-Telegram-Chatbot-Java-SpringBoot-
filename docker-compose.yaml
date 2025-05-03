@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  db:
+    restart: always
+    image: "postgres:16.3"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=postgres
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+      - "1234:5432"
+
+volumes:
+  data:
+    driver: local

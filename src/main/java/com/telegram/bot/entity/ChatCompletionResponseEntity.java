@@ -19,10 +19,10 @@ public class ChatCompletionResponseEntity {
     private Long id;
 
     @OneToMany(mappedBy = "chatCompletionResponse", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ChoiceEntity> choices; // Связь с choices (множество вариантов ответа)
+    private List<ChoiceEntity> choices;
 
     @Column(name = "message_content")
-    private String content;  // Field to store the response content from GPT
+    private String content;
 
     @ManyToOne
     @JoinColumn(name = "chat_completion_request_id", nullable = false)

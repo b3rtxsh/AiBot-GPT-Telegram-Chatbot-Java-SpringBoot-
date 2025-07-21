@@ -1,6 +1,5 @@
 package com.telegram.bot.command;
 
-import com.telegram.bot.command.TelegramCommandHandler;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;

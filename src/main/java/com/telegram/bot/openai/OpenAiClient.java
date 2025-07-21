@@ -25,12 +25,12 @@ public class OpenAiClient {
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
 
     public ChatCompletionResponseDto createChatCompletion(ChatCompletionRequestEntity requestEntity) {
-        // 1. Преобразуем сообщения в OpenAI формат
+
         List<GptMessageDto> messages = requestEntity.getChatHistory().getMessages().stream()
                 .map(msg -> new GptMessageDto(msg.getRole(), msg.getContent()))
                 .toList();
 
-        // 2. Собираем тело запроса
+
         ChatCompletionRequestDto requestDto = new ChatCompletionRequestDto(
                 requestEntity.getModel(),
                 messages
@@ -51,6 +51,7 @@ public class OpenAiClient {
 
         return response.getBody();
     }
+
     @SneakyThrows
     public TranscriptionResponseEntity createTranscription(
             CreateTranscriptionRequestEntity request
@@ -78,11 +79,6 @@ public class OpenAiClient {
 
         return result;
     }
-
-
-
-
-
 
 
 }

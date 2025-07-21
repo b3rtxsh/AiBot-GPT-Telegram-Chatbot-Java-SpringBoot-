@@ -29,6 +29,4 @@ public class ChatCompletionRequestEntity {
     @JsonIgnore
     private ChatHistory chatHistory;
 
-//    public ChatCompletionRequestEntity(String s, GptMessage messages, ChatHistory history) {
-//    }
 }

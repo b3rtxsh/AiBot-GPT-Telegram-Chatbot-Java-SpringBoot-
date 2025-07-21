@@ -18,7 +18,6 @@ import java.util.List;
 public class ChatHistory {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
 
@@ -30,19 +29,9 @@ public class ChatHistory {
     @JsonManagedReference
     private List<GptMessage> messages = new ArrayList<>();
 
-//    @Version
-//    @Column(nullable = false)
-//    private Integer version = 0;  // Used for optimistic locking
-
-//    public ChatHistory(Long chatId) {
-//        this.createdAt = LocalDateTime.now();
-//    }
-
     public ChatHistory(Long chatId) {
         this.createdAt = LocalDateTime.now();
-        // Initialize version explicitly
+
     }
 
-//    public ChatHistory() {
-//    }
 }

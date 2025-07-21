@@ -21,7 +21,7 @@ public class GptMessage {
     @ManyToOne
     @JoinColumn(name = "chat_history_id")
     @JsonBackReference
-    private ChatHistory chatHistory; // Добавлена связь с ChatHistory
+    private ChatHistory chatHistory;
 
     @Column(name = "user_role", nullable = false)
     private String role;
@@ -30,7 +30,7 @@ public class GptMessage {
     private String content;
 
     @OneToOne
-    @JoinColumn(name = "chat_completion_id") // или как у тебя называется колонка
+    @JoinColumn(name = "chat_completion_id")
     @JsonIgnore
     private ChatCompletionRequestEntity completion;
 

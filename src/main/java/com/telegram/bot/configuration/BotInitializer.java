@@ -1,30 +1,57 @@
 package com.telegram.bot.configuration;
 
 import com.telegram.bot.telegram.TelegramBot;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-@Component
+@Configuration
+@RequiredArgsConstructor
 public class BotInitializer {
+
     private final TelegramBot telegramBot;
-    @Autowired
-    public BotInitializer(TelegramBot telegramBot) {
-        this.telegramBot = telegramBot;
+    private final TelegramBotProperties properties;
+
+    @Value("${telegram.webhook.url}")
+    private String webhookBaseUrl;
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 
-    @EventListener
-            ({ContextRefreshedEvent.class})
-    public void init()throws TelegramApiException {
-        TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-        try{
-            telegramBotsApi.registerBot(telegramBot);
-        } catch (TelegramApiException e){
+    @PostConstruct
+    public void initWebhook() {
+        String fullWebhookUrl = webhookBaseUrl + "/" + telegramBot.getBotPath();
+        String token = properties.getToken();
 
+        try {
+            String deleteUrl = "https://api.telegram.org/bot" + token + "/deleteWebhook";
+            String setUrl = "https://api.telegram.org/bot" + token + "/setWebhook?url=" + fullWebhookUrl;
+
+            new RestTemplate().getForObject(deleteUrl, String.class);
+            new RestTemplate().getForObject(setUrl, String.class);
+
+            System.out.println("✅ Webhook updated to: " + fullWebhookUrl);
+        } catch (Exception e) {
+            System.err.println("❌ Ошибка установки вебхука: " + e.getMessage());
         }
+    }
+
+    @Bean
+    public TelegramBotsApi telegramBotsApi() throws TelegramApiException {
+        TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
+
+        SetWebhook setWebhook = SetWebhook.builder().url(webhookBaseUrl + "/" + telegramBot.getBotPath()).build();
+
+        botsApi.registerBot(telegramBot, setWebhook);
+        return botsApi;
     }
 }

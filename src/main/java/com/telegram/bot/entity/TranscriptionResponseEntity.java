@@ -1,6 +1,5 @@
 package com.telegram.bot.entity;
 
-import com.telegram.bot.entity.CreateTranscriptionRequestEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

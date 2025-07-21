@@ -17,8 +17,8 @@ public class CreateTranscriptionRequestEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String audioFilePath; // Store the file path instead of the File object
+    private String audioFilePath;
 
     @Column(name = "ai_model", nullable = false)
-    private String model; // Model used for transcription
+    private String model;
 }

@@ -1,14 +1,12 @@
 package com.telegram.bot.services;
 
 import com.telegram.bot.entity.ChatCompletionRequestEntity;
-import com.telegram.bot.entity.ChatCompletionResponseEntity;
 import com.telegram.bot.entity.ChatHistory;
 import com.telegram.bot.entity.GptMessage;
 import com.telegram.bot.openai.OpenAiClient;
 import com.telegram.bot.repository.ChatCompletionRequestRepository;
 import com.telegram.bot.repository.ChatCompletionResponseRepository;
 import com.telegram.bot.repository.GptMessageRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,13 +25,13 @@ public class ChatGptService {
     public String getResponseChatForUser(Long userId, String userTextInput) {
         for (int attempt = 0; attempt < 3; attempt++) {
             try {
-                // 1. Добавляем сообщение пользователя
+
                 ChatHistory chatHistory = chatGptHistoryService.addMessageToHistory(
                         userId,
                         GptMessage.builder().content(userTextInput).role("user").build()
                 );
 
-                // 2. Формируем запрос к OpenAI
+
                 GptMessage firstMessage = chatHistory.getMessages().stream()
                         .findFirst()
                         .orElseThrow(() -> new IllegalStateException("No messages found in chat history"));
@@ -47,9 +45,9 @@ public class ChatGptService {
                 firstMessage.setCompletion(requestEntity);
                 requestEntity.setMessages(firstMessage);
 
-               chatCompletionRequestRepository.save(requestEntity);
+                chatCompletionRequestRepository.save(requestEntity);
 
-                // 3. Получаем ответ от OpenAI
+
                 var response = openAiClient.createChatCompletion(requestEntity);
 
 //                var responseEntity = ChatCompletionResponseEntity.builder()
@@ -62,7 +60,7 @@ public class ChatGptService {
 
                 var messageFromGpt = response.getChoices().get(0).getMessage();
 
-                // 4. Добавляем ответ в историю
+
 //                chatGptHistoryService.addMessageToHistory(userId, messageFromGpt);
 
                 return messageFromGpt.getContent();

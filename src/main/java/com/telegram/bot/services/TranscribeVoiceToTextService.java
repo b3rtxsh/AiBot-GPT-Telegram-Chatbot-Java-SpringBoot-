@@ -19,22 +19,22 @@ public class TranscribeVoiceToTextService {
     private final TranscriptionResponseRepository transcriptionResponseRepository;
 
     public String transcribe(File audioFile) {
-        // Step 1: Create a Transcription Request Entity
+
         CreateTranscriptionRequestEntity requestEntity = CreateTranscriptionRequestEntity.builder()
-                .audioFilePath(audioFile.getAbsolutePath()) // Store file path instead of File object
+                .audioFilePath(audioFile.getAbsolutePath())
                 .model("whisper-1")
                 .build();
 
-        // Save the request entity to the database
+
         createTranscriptionRequestRepository.save(requestEntity);
 
-        // Step 2: Make the API call via OpenAIClient
+
         TranscriptionResponseEntity responseEntity = openAiClient.createTranscription(requestEntity);
 
-        // Save the response entity to the database
+
         transcriptionResponseRepository.save(responseEntity);
 
-        // Step 3: Return the transcription text
+
         return responseEntity.getText();
     }
 }

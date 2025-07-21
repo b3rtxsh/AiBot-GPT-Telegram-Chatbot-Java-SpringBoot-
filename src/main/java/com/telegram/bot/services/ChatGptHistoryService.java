@@ -1,6 +1,5 @@
 package com.telegram.bot.services;
 
-import com.telegram.bot.dto.GptMessageDto;
 import com.telegram.bot.entity.ChatHistory;
 import com.telegram.bot.entity.GptMessage;
 import com.telegram.bot.repository.ChatHistoryRepository;
@@ -23,7 +22,7 @@ public class ChatGptHistoryService {
     @Transactional
     public ChatHistory createHistory(Long userId) {
         ChatHistory chatHistory = new ChatHistory();
-       chatHistory.setId(userId);
+        chatHistory.setId(userId);
         chatHistory.setCreatedAt(LocalDateTime.now());
         return chatHistoryRepository.save(chatHistory);
     }
@@ -38,12 +37,12 @@ public class ChatGptHistoryService {
     public ChatHistory addMessageToHistory(Long userId, GptMessage gptMessage) {
         ChatHistory chatHistory = createHistoryIfNotExist(userId);
 
-        gptMessage.setChatHistory(chatHistory); // устанавливаем связь
-        chatHistory.getMessages().add(gptMessage); // добавляем в историю
+        gptMessage.setChatHistory(chatHistory);
+        chatHistory.getMessages().add(gptMessage);
 
-        gptMessageRepository.save(gptMessage); // сохраняем сообщение
+        gptMessageRepository.save(gptMessage);
 
-        return chatHistory; // теперь история содержит это сообщение
+        return chatHistory;
     }
 
 

@@ -1,5 +1,6 @@
 package com.telegram.bot.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,7 +29,5 @@ public class ChatCompletionResponseEntity {
     @JoinColumn(name = "chat_completion_request_id", nullable = false)
     private ChatCompletionRequestEntity chatCompletionRequest;
 
-    public ChatCompletionResponseEntity(String content, ChatCompletionRequestEntity requestEntity) {
-    }
 }
 

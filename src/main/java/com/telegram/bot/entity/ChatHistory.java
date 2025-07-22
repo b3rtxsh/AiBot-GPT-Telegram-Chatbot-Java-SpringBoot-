@@ -20,18 +20,16 @@ public class ChatHistory {
     @Id
     private Long id;
 
-
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "chatHistory", cascade = CascadeType.ALL,
             orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
-    private List<GptMessage> messages = new ArrayList<>();
+    private List<UserMessage> messages = new ArrayList<>();
 
     public ChatHistory(Long chatId) {
         this.createdAt = LocalDateTime.now();
-
     }
 
 }

@@ -1,12 +1,13 @@
 package com.telegram.bot.services;
 
 import com.telegram.bot.entity.ChatCompletionRequestEntity;
+import com.telegram.bot.entity.ChatCompletionResponseEntity;
 import com.telegram.bot.entity.ChatHistory;
-import com.telegram.bot.entity.GptMessage;
+import com.telegram.bot.entity.UserMessage;
 import com.telegram.bot.openai.OpenAiClient;
 import com.telegram.bot.repository.ChatCompletionRequestRepository;
 import com.telegram.bot.repository.ChatCompletionResponseRepository;
-import com.telegram.bot.repository.GptMessageRepository;
+import com.telegram.bot.repository.UserMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +20,7 @@ public class ChatGptService {
     private final ChatGptHistoryService chatGptHistoryService;
     private final ChatCompletionRequestRepository chatCompletionRequestRepository;
     private final ChatCompletionResponseRepository chatCompletionResponseRepository;
-    private final GptMessageRepository gptMessageRepository;
+    private final UserMessageRepository userMessageRepository;
 
     @Transactional
     public String getResponseChatForUser(Long userId, String userTextInput) {
@@ -28,11 +29,11 @@ public class ChatGptService {
 
                 ChatHistory chatHistory = chatGptHistoryService.addMessageToHistory(
                         userId,
-                        GptMessage.builder().content(userTextInput).role("user").build()
+                        UserMessage.builder().content(userTextInput).role("user").build()
                 );
 
 
-                GptMessage firstMessage = chatHistory.getMessages().stream()
+                UserMessage firstMessage = chatHistory.getMessages().stream()
                         .findFirst()
                         .orElseThrow(() -> new IllegalStateException("No messages found in chat history"));
 
@@ -50,18 +51,18 @@ public class ChatGptService {
 
                 var response = openAiClient.createChatCompletion(requestEntity);
 
-//                var responseEntity = ChatCompletionResponseEntity.builder()
-//                        .content(response.getChoices().get(0).getMessage().getContent())
-//                        .chatCompletionRequest(requestEntity)
-//                        .build();
-//
-//
-//                chatCompletionResponseRepository.save(responseEntity);
+                var responseEntity = ChatCompletionResponseEntity.builder()
+                        .content(response.getChoices().get(0).getMessage().getContent())
+                        .chatCompletionRequest(requestEntity)
+                        .build();
+
+
+                chatCompletionResponseRepository.save(responseEntity);
 
                 var messageFromGpt = response.getChoices().get(0).getMessage();
 
 
-//                chatGptHistoryService.addMessageToHistory(userId, messageFromGpt);
+               chatGptHistoryService.addMessageToHistory(userId, firstMessage);
 
                 return messageFromGpt.getContent();
 

@@ -11,12 +11,12 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GptMessage {
+public class UserMessage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "message_id")
-    private Long id; // Исправлено с user_id на id
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "chat_history_id")
@@ -34,7 +34,5 @@ public class GptMessage {
     @JsonIgnore
     private ChatCompletionRequestEntity completion;
 
-
-    public GptMessage(String role, String content) {
-    }
 }
+

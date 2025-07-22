@@ -74,7 +74,7 @@ public class OpenAiClient {
 
         TranscriptionResponseEntity result = responseEntity.getBody();
         if (result != null) {
-            result.setCreateTranscriptionRequest(request); // 🔥 ВАЖНО!
+            result.setCreateTranscriptionRequest(request); //
         }
 
         return result;

@@ -1,9 +1,9 @@
 package com.telegram.bot.services;
 
 import com.telegram.bot.entity.ChatHistory;
-import com.telegram.bot.entity.GptMessage;
+import com.telegram.bot.entity.UserMessage;
 import com.telegram.bot.repository.ChatHistoryRepository;
-import com.telegram.bot.repository.GptMessageRepository;
+import com.telegram.bot.repository.UserMessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class ChatGptHistoryService {
 
     private final ChatHistoryRepository chatHistoryRepository;
-    private final GptMessageRepository gptMessageRepository;
+    private final UserMessageRepository userMessageRepository;
 
     @Transactional
     public ChatHistory createHistory(Long userId) {
@@ -34,13 +34,13 @@ public class ChatGptHistoryService {
     }
 
     @Transactional
-    public ChatHistory addMessageToHistory(Long userId, GptMessage gptMessage) {
+    public ChatHistory addMessageToHistory(Long userId, UserMessage userMessage) {
         ChatHistory chatHistory = createHistoryIfNotExist(userId);
 
-        gptMessage.setChatHistory(chatHistory);
-        chatHistory.getMessages().add(gptMessage);
+        userMessage.setChatHistory(chatHistory);
+        chatHistory.getMessages().add(userMessage);
 
-        gptMessageRepository.save(gptMessage);
+        userMessageRepository.save(userMessage);
 
         return chatHistory;
     }

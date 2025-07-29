@@ -30,7 +30,7 @@ public class UserMessage {
     private String content;
 
     @OneToOne
-    @JoinColumn(name = "chat_completion_id")
+    @JoinColumn(name = "chat_completion_request_id")
     @JsonIgnore
     private ChatCompletionRequestEntity completion;
 

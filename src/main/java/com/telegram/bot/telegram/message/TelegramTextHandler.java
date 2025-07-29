@@ -14,9 +14,12 @@ public class TelegramTextHandler {
     public SendMessage processTextMessage(Message message) {
         var text = message.getText();
         var chatId = message.getChatId();
-
-        var gptGeneratedText = gptService.getResponseChatForUser(chatId, text);
-        return new SendMessage(chatId.toString(), gptGeneratedText);
+        if(!text.matches(".*[<>\"'`;\\\\].*")) {
+            var gptGeneratedText = gptService.getResponseChatForUser(chatId, text);
+            return new SendMessage(chatId.toString(), gptGeneratedText);
+        } else {
+            throw new IllegalStateException("Denied symbols");
+        }
     }
 }
 

@@ -1,7 +1,7 @@
 package com.telegram.bot.services;
 
 import com.telegram.bot.entity.ChatHistory;
-import com.telegram.bot.entity.UserMessage;
+import com.telegram.bot.entity.Message;
 import com.telegram.bot.repository.ChatHistoryRepository;
 import com.telegram.bot.repository.UserMessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,13 +34,13 @@ public class ChatGptHistoryService {
     }
 
     @Transactional
-    public ChatHistory addMessageToHistory(Long userId, UserMessage userMessage) {
+    public ChatHistory addMessageToHistory(Long userId, Message message) {
         ChatHistory chatHistory = createHistoryIfNotExist(userId);
 
-        userMessage.setChatHistory(chatHistory);
-        chatHistory.getMessages().add(userMessage);
+        message.setChatHistory(chatHistory);
+        chatHistory.getMessages().add(message);
 
-        userMessageRepository.save(userMessage);
+        userMessageRepository.save(message);
 
         return chatHistory;
     }

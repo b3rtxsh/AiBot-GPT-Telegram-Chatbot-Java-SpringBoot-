@@ -22,7 +22,7 @@ public class ChatCompletionRequestEntity {
 
     @OneToOne(mappedBy = "completion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private UserMessage messages;
+    private Message messages;
 
     @ManyToOne
     @JoinColumn(name = "chat_history_id", nullable = false)

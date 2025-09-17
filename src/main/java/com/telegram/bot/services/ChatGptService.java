@@ -1,16 +1,14 @@
 package com.telegram.bot.services;
 
 import com.telegram.bot.entity.ChatCompletionRequestEntity;
-import com.telegram.bot.entity.ChatCompletionResponseEntity;
 import com.telegram.bot.entity.ChatHistory;
-import com.telegram.bot.entity.UserMessage;
+import com.telegram.bot.entity.Message;
 import com.telegram.bot.openai.OpenAiClient;
 import com.telegram.bot.repository.ChatCompletionRequestRepository;
-import com.telegram.bot.repository.ChatCompletionResponseRepository;
 import com.telegram.bot.repository.UserMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -19,61 +17,56 @@ public class ChatGptService {
     private final OpenAiClient openAiClient;
     private final ChatGptHistoryService chatGptHistoryService;
     private final ChatCompletionRequestRepository chatCompletionRequestRepository;
-    private final ChatCompletionResponseRepository chatCompletionResponseRepository;
     private final UserMessageRepository userMessageRepository;
+    private final SafeDbExecutor safeDbExecutor;
 
-    @Transactional
     public String getResponseChatForUser(Long userId, String userTextInput) {
-        for (int attempt = 0; attempt < 3; attempt++) {
-            try {
 
-                ChatHistory chatHistory = chatGptHistoryService.addMessageToHistory(
-                        userId,
-                        UserMessage.builder().content(userTextInput).role("user").build()
-                );
+        Message userMessage = Message.builder()
+                .content(userTextInput)
+                .role("user")
+                .build();
 
+        ChatHistory chatHistory = safeDbExecutor.execute(
+                () -> chatGptHistoryService.addMessageToHistory(userId, userMessage),
+                "Ошибка сохранения истории для userId=" + userId
+        );
+        var requestEntity = ChatCompletionRequestEntity.builder()
+                .model("gpt-4")
+                .messages(userMessage)
+                .chatHistory(chatHistory)
+                .build();
 
-                UserMessage firstMessage = chatHistory.getMessages().stream()
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalStateException("No messages found in chat history"));
+        userMessage.setCompletion(requestEntity);
 
-                var requestEntity = ChatCompletionRequestEntity.builder()
-                        .model("gpt-4")
-                        .messages(firstMessage)
-                        .chatHistory(chatHistory)
-                        .build();
-
-                firstMessage.setCompletion(requestEntity);
-                requestEntity.setMessages(firstMessage);
-
-                chatCompletionRequestRepository.save(requestEntity);
+        safeDbExecutor.run(
+                () -> chatCompletionRequestRepository.save(requestEntity),
+                "Ошибка сохранения ChatCompletionRequestEntity"
+        );
 
 
                 var response = openAiClient.createChatCompletion(requestEntity);
 
-                var responseEntity = ChatCompletionResponseEntity.builder()
+                var responseEntity = Message.builder()
                         .content(response.getChoices().get(0).getMessage().getContent())
-                        .chatCompletionRequest(requestEntity)
+                        .completion(requestEntity)
+                        .chatHistory(userMessage.getChatHistory())
+                        .role("assistant")
                         .build();
 
+        safeDbExecutor.run(
+                () -> userMessageRepository.save(responseEntity),
+                "Ошибка сохранения ответа от GPT"
+        );
 
-                chatCompletionResponseRepository.save(responseEntity);
+        safeDbExecutor.run(
+                () -> chatGptHistoryService.addMessageToHistory(userId, userMessage),
+                "Ошибка обновления истории для userId=" + userId
+        );
 
                 var messageFromGpt = response.getChoices().get(0).getMessage();
 
-
-               chatGptHistoryService.addMessageToHistory(userId, firstMessage);
-
                 return messageFromGpt.getContent();
 
-            } catch (Exception e) {
-                if (e instanceof jakarta.persistence.OptimisticLockException && attempt < 2) {
-                    System.out.println("Retrying transaction due to OptimisticLockException...");
-                } else {
-                    throw e;
-                }
-            }
-        }
-        throw new IllegalStateException("Unexpected error in transaction.");
     }
 }

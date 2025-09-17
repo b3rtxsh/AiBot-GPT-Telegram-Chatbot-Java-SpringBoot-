@@ -2,10 +2,10 @@ package com.telegram.bot.openai;
 
 import com.telegram.bot.dto.ChatCompletionRequestDto;
 import com.telegram.bot.dto.ChatCompletionResponseDto;
-import com.telegram.bot.dto.GptMessageDto;
+import com.telegram.bot.dto.MessageDto;
+import com.telegram.bot.dto.TranscriptionResponseDto;
 import com.telegram.bot.entity.ChatCompletionRequestEntity;
-import com.telegram.bot.entity.CreateTranscriptionRequestEntity;
-import com.telegram.bot.entity.TranscriptionResponseEntity;
+import com.telegram.bot.entity.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.core.io.FileSystemResource;
@@ -14,7 +14,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 public class OpenAiClient {
@@ -25,9 +27,11 @@ public class OpenAiClient {
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
 
     public ChatCompletionResponseDto createChatCompletion(ChatCompletionRequestEntity requestEntity) {
-
-        List<GptMessageDto> messages = requestEntity.getChatHistory().getMessages().stream()
-                .map(msg -> new GptMessageDto(msg.getRole(), msg.getContent()))
+        for (Message msg : requestEntity.getChatHistory().getMessages()) {
+            System.out.println("ROLE: " + msg.getRole() + ", CONTENT: " + msg.getContent());
+        }
+        List<MessageDto> messages = requestEntity.getChatHistory().getMessages().stream()
+                .map(msg -> new MessageDto(msg.getRole(), msg.getContent()))
                 .toList();
 
 
@@ -53,31 +57,24 @@ public class OpenAiClient {
     }
 
     @SneakyThrows
-    public TranscriptionResponseEntity createTranscription(
-            CreateTranscriptionRequestEntity request
-    ) {
+    public String createTranscription(File audioFile, String model) {
         String url = "https://api.openai.com/v1/audio/transcriptions";
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("Authorization", "Bearer " + token);
-        httpHeaders.set("Content-type", "multipart/form-data");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file", new FileSystemResource(request.getAudioFilePath()));
-        body.add("model", request.getModel());
+        body.add("file", new FileSystemResource(audioFile));
+        body.add("model", model);
 
-        var httpEntity = new HttpEntity<>(body, httpHeaders);
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(body, headers);
 
-        ResponseEntity<TranscriptionResponseEntity> responseEntity = restTemplate.exchange(
-                url, HttpMethod.POST, httpEntity, TranscriptionResponseEntity.class
+        ResponseEntity<TranscriptionResponseDto> response = restTemplate.exchange(
+                url, HttpMethod.POST, httpEntity, TranscriptionResponseDto.class
         );
 
-        TranscriptionResponseEntity result = responseEntity.getBody();
-        if (result != null) {
-            result.setCreateTranscriptionRequest(request); //
-        }
-
-        return result;
+        return Objects.requireNonNull(response.getBody()).getText();
     }
 
 

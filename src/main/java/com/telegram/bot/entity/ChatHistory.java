@@ -24,12 +24,9 @@ public class ChatHistory {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "chatHistory", cascade = CascadeType.ALL,
-            orphanRemoval = true, fetch = FetchType.LAZY)
+            orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
-    private List<UserMessage> messages = new ArrayList<>();
+    private List<Message> messages = new ArrayList<>();
 
-    public ChatHistory(Long chatId) {
-        this.createdAt = LocalDateTime.now();
-    }
 
 }

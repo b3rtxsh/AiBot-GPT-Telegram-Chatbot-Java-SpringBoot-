@@ -6,12 +6,12 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "gpt_messages")
+@Table(name = "user_messages")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserMessage {
+public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,10 +23,10 @@ public class UserMessage {
     @JsonBackReference
     private ChatHistory chatHistory;
 
-    @Column(name = "user_role", nullable = false)
+    @Column(name = "role", nullable = false)
     private String role;
 
-    @Column(name = "message_content", nullable = false)
+    @Column(name = "message_content", columnDefinition = "text", nullable = false)
     private String content;
 
     @OneToOne

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GptMessageDto {
+public class MessageDto {
     private String role;
     private String content;
 }

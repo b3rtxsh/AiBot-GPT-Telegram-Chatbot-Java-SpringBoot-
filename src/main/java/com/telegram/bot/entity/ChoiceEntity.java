@@ -18,7 +18,7 @@ public class ChoiceEntity {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "gpt_message_id", nullable = false)
-    private UserMessage message;
+    private Message message;
 
     @ManyToOne
     @JoinColumn(name = "chat_completion_response_id", nullable = false)

@@ -20,7 +20,7 @@ public class ChatCompletionRequestEntity {
     @Column(name = "ai_model", nullable = false)
     private String model;
 
-    @OneToOne(mappedBy = "completion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "completion", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JsonIgnore
     private Message messages;
 

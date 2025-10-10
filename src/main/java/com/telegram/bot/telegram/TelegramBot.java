@@ -7,7 +7,11 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.stickers.SetStickerSetThumbnail;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Component
@@ -46,5 +50,15 @@ public class TelegramBot extends TelegramWebhookBot {
     @Override
     public String getBotPath() {
         return properties.getPath();
+    }
+
+    @Override
+    public Boolean execute(SetStickerSetThumbnail setStickerSetThumbnail) throws TelegramApiException {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Boolean> executeAsync(SetStickerSetThumbnail setStickerSetThumbnail) {
+        return null;
     }
 }

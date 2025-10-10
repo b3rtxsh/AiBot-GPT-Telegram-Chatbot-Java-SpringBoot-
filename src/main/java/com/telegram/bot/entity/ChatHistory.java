@@ -23,7 +23,7 @@ public class ChatHistory {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "chatHistory", cascade = CascadeType.ALL,
+    @OneToMany(mappedBy = "chatHistory", cascade = CascadeType.REMOVE,
             orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<Message> messages = new ArrayList<>();

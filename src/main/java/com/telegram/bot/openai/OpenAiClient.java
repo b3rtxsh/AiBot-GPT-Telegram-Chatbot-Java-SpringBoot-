@@ -27,9 +27,7 @@ public class OpenAiClient {
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
 
     public ChatCompletionResponseDto createChatCompletion(ChatCompletionRequestEntity requestEntity) {
-        for (Message msg : requestEntity.getChatHistory().getMessages()) {
-            System.out.println("ROLE: " + msg.getRole() + ", CONTENT: " + msg.getContent());
-        }
+
         List<MessageDto> messages = requestEntity.getChatHistory().getMessages().stream()
                 .map(msg -> new MessageDto(msg.getRole(), msg.getContent()))
                 .toList();

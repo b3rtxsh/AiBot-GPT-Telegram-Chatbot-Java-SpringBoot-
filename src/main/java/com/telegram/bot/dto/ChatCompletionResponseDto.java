@@ -1,10 +1,12 @@
 package com.telegram.bot.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@Builder
 public class ChatCompletionResponseDto {
     private String id;
     private String object;

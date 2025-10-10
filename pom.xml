@@ -67,6 +67,12 @@
 			<groupId>org.telegram</groupId>
 			<artifactId>telegrambots</artifactId>
 			<version>6.5.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.vaadin.external.google</groupId>
+					<artifactId>android-json</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>
@@ -76,7 +82,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.5.0</version>  <!-- Используйте последнюю стабильную версию -->
+			<version>42.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -91,38 +97,83 @@
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
-			<version>9.16.1</version>  <!-- Используйте последнюю стабильную версию -->
+			<version>9.16.1</version>
 		</dependency>
-		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>2.3.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate.validator</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>8.0.1.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish</groupId>
-			<artifactId>jakarta.el</artifactId>
-			<version>4.0.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jaxb</groupId>
-			<artifactId>jaxb-runtime</artifactId>
-			<version>2.3.1</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.activation</groupId>
-			<artifactId>activation</artifactId>
-			<version>1.1.1</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>javax.xml.bind</groupId>-->
+<!--			<artifactId>jaxb-api</artifactId>-->
+<!--			<version>2.3.1</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.hibernate.validator</groupId>-->
+<!--			<artifactId>hibernate-validator</artifactId>-->
+<!--			<version>8.0.1.Final</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.glassfish</groupId>-->
+<!--			<artifactId>jakarta.el</artifactId>-->
+<!--			<version>4.0.2</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.glassfish.jaxb</groupId>-->
+<!--			<artifactId>jaxb-runtime</artifactId>-->
+<!--			<version>2.3.1</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>javax.activation</groupId>-->
+<!--			<artifactId>activation</artifactId>-->
+<!--			<version>1.1.1</version>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
-	</dependencies>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>5.11.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>5.14.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<version>5.14.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>3.26.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.telegram</groupId>
+			<artifactId>telegrambots-meta</artifactId>
+			<version>6.9.7.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>1.20.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>1.20.3</version>
+			<scope>test</scope>
+		</dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>jdbc</artifactId>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>

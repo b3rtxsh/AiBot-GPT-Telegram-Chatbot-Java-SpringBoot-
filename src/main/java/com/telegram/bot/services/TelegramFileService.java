@@ -41,7 +41,7 @@ public class TelegramFileService {
     }
 
     @SneakyThrows
-    private java.io.File getFileFromUrl(String urlToDownloadFile) {
+    java.io.File getFileFromUrl(String urlToDownloadFile) {
         URL url = new URI(urlToDownloadFile).toURL();
         var fileTemp = java.io.File.createTempFile("telegram", ".ogg");
 
@@ -55,4 +55,5 @@ public class TelegramFileService {
         }
         return fileTemp;
     }
+
 }

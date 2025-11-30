@@ -1,11 +1,7 @@
 package com.telegram.bot.openai;
 
-import com.telegram.bot.dto.ChatCompletionRequestDto;
-import com.telegram.bot.dto.ChatCompletionResponseDto;
-import com.telegram.bot.dto.MessageDto;
-import com.telegram.bot.dto.TranscriptionResponseDto;
+import com.telegram.bot.dto.*;
 import com.telegram.bot.entity.ChatCompletionRequestEntity;
-import com.telegram.bot.entity.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.core.io.FileSystemResource;
@@ -24,40 +20,48 @@ public class OpenAiClient {
     private final RestTemplate restTemplate;
     private final String token;
 
-    private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
+    private static final String CHAT_COMPLETION_URL = "https://api.openai.com/v1/chat/completions";
+    private static final String TRANSCRIPTION_URL = "https://api.openai.com/v1/audio/transcriptions";
 
+    /**
+     * Отправляет запрос в OpenAI Chat API и возвращает полный ответ DTO.
+     */
     public ChatCompletionResponseDto createChatCompletion(ChatCompletionRequestEntity requestEntity) {
-
+        // Преобразуем историю сообщений в DTO
         List<MessageDto> messages = requestEntity.getChatHistory().getMessages().stream()
                 .map(msg -> new MessageDto(msg.getRole(), msg.getContent()))
                 .toList();
 
-
+        // Формируем тело запроса
         ChatCompletionRequestDto requestDto = new ChatCompletionRequestDto(
                 requestEntity.getModel(),
                 messages
         );
 
+        // Заголовки запроса
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(token);
 
         HttpEntity<ChatCompletionRequestDto> httpEntity = new HttpEntity<>(requestDto, headers);
 
+        // Отправляем POST запрос
         ResponseEntity<ChatCompletionResponseDto> response = restTemplate.exchange(
-                OPENAI_URL,
+                CHAT_COMPLETION_URL,
                 HttpMethod.POST,
                 httpEntity,
                 ChatCompletionResponseDto.class
         );
 
-        return response.getBody();
+        // Возвращаем тело (DTO)
+        return Objects.requireNonNull(response.getBody(), "Response body is null");
     }
 
+    /**
+     * Отправляет аудио файл на Whisper для транскрипции.
+     */
     @SneakyThrows
     public String createTranscription(File audioFile, String model) {
-        String url = "https://api.openai.com/v1/audio/transcriptions";
-
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -69,12 +73,12 @@ public class OpenAiClient {
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(body, headers);
 
         ResponseEntity<TranscriptionResponseDto> response = restTemplate.exchange(
-                url, HttpMethod.POST, httpEntity, TranscriptionResponseDto.class
+                TRANSCRIPTION_URL,
+                HttpMethod.POST,
+                httpEntity,
+                TranscriptionResponseDto.class
         );
 
-        return Objects.requireNonNull(response.getBody()).getText();
+        return Objects.requireNonNull(response.getBody(), "Transcription response is null").getText();
     }
-
-
 }
-

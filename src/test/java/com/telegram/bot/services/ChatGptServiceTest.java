@@ -1,7 +1,7 @@
 package com.telegram.bot.services;
 
+import com.telegram.bot.dto.ChatChoiceDto;
 import com.telegram.bot.dto.ChatCompletionResponseDto;
-import com.telegram.bot.dto.Choice;
 import com.telegram.bot.dto.MessageDto;
 import com.telegram.bot.entity.ChatCompletionRequestEntity;
 import com.telegram.bot.entity.ChatHistory;
@@ -72,14 +72,14 @@ class ChatGptServiceTest {
                 .content("Привет, человек!")
                 .build();
 
-        Choice choice = Choice.builder()
+        ChatChoiceDto chatChoiceDto = ChatChoiceDto.builder()
                 .index(0)
                 .message(gptMessage)
                 .finishReason("stop")
                 .build();
 
         ChatCompletionResponseDto responseDto = ChatCompletionResponseDto.builder()
-                .choices(List.of(choice))
+                .choices(List.of(chatChoiceDto))
                 .build();
 
         when(openAiClient.createChatCompletion(any(ChatCompletionRequestEntity.class)))

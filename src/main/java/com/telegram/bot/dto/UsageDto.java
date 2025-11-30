@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TranscriptionRequestDto {
-    private String filePath;
-    private String model;
+public class UsageDto {
+    private int promptTokens;
+    private int completionTokens;
+    private int totalTokens;
 }
+

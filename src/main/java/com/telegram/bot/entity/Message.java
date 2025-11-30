@@ -34,5 +34,7 @@ public class Message {
     @JsonIgnore
     private ChatCompletionRequestEntity completion;
 
+    public Message(String user, String test) {
+    }
 }
 

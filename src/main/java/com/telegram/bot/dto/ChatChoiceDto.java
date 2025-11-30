@@ -1,14 +1,16 @@
 package com.telegram.bot.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-public class Choice {
+@AllArgsConstructor
+@NoArgsConstructor
+public class ChatChoiceDto {
     private int index;
     private MessageDto message;
-    @JsonProperty("finish_reason")
     private String finishReason;
 }

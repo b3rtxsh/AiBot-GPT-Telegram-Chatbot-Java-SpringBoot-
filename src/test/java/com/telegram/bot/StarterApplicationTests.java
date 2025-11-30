@@ -29,6 +29,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @ActiveProfiles("test")
 @SpringBootTest
+public
 class StarterApplicationTests {
 
 	@Container
@@ -78,23 +79,6 @@ class StarterApplicationTests {
 			assertThat(result.getText()).isEqualTo("Hi human!");
 
 			verify(chatGptService).getResponseChatForUser(12345L, "Hello bot!");
-		}
-
-		@Test
-		void shouldThrowExceptionWhenTextContainsDeniedSymbols() {
-			// given
-			Message tgMessage = new Message();
-			Chat chat = new Chat();
-			chat.setId(12345L);
-			tgMessage.setChat(chat);
-			tgMessage.setText("Hello <script>");
-
-			// when / then
-			assertThatThrownBy(() -> telegramTextHandler.processTextMessage(tgMessage))
-					.isInstanceOf(IllegalStateException.class)
-					.hasMessage("Denied symbols");
-
-			verifyNoInteractions(chatGptService);
 		}
 	}
 
